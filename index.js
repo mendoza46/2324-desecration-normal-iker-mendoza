@@ -2,7 +2,8 @@ const gameService = require('./gameService');
 
 const start = async ()=>{
 
-    const heroes = await gameService.getAllHeroes();
+    await gameService.getAllHeroes();
+
 }
 
 start();
