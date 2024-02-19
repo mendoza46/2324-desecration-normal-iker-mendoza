@@ -57,16 +57,19 @@ const gameLoop = (villainZarate, superHero, i, startingOrder) => {
     if(success){
         const secondDiceThrow = diceNumbers.dice1D20();
 
-        if(secondDiceThrow === 1 || secondDiceThrow === 2){
-            console.log("PIFIA")
-        }
-        else if(secondDiceThrow > 2 && secondDiceThrow < 18){
+        if(secondDiceThrow > 2 && secondDiceThrow < 18){
             console.log("DAÑO NORMAL")
             let normalDamage = Math.ceil((startingOrder[1].powerstats.power + startingOrder[1].powerstats.strength) * secondDiceThrow / 100);
             startingOrder[1].powerstats.hitPoints = startingOrder[1].powerstats.hitPoints - normalDamage;
         }
-        else if(secondDiceThrow > 17 && secondDiceThrow < 21){
-            console.log("DAÑO CRITICO")
+        else if(secondDiceThrow > 17){
+            if(secondDiceThrow === 18){
+                criticalDamage
+            }
+        }
+        else{
+            console.log("secondDiceThrow")
+            console.log(secondDiceThrow)
         }
     }
     else{
