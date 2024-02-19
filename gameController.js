@@ -62,6 +62,8 @@ const gameLoop = (villainZarate, superHero, i, startingOrder) => {
         }
         else if(secondDiceThrow > 2 && secondDiceThrow < 18){
             console.log("DAÑO NORMAL")
+            let normalDamage = Math.ceil((startingOrder[1].powerstats.power + startingOrder[1].powerstats.strength) * secondDiceThrow / 100);
+            startingOrder[1].powerstats.hitPoints = startingOrder[1].powerstats.hitPoints - normalDamage;
         }
         else if(secondDiceThrow > 17 && secondDiceThrow < 21){
             console.log("DAÑO CRITICO")
