@@ -1,7 +1,6 @@
 const diceNumbers = require('./dices/diceNumbers');
 
 const game = async (heroes) => {
-    console.log("entra en la fncion game")
     const villainZarate = getZarate(heroes);
 
     const superHero = getRandomHero(heroes, villainZarate);
@@ -194,7 +193,6 @@ const getStartingOrder = (villainZarate, superHero) => {
     }
 
     turn.forEach(element => {
-        // console.log(element)
         element.powerstats.hitPoints = element.powerstats.strength * 10;
         if(element.powerstats.hitPoints > 666){
             element.powerstats.hitPoints = 666;
