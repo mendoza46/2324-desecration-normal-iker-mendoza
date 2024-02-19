@@ -21,6 +21,16 @@ const dice2D3 = () => {
     return number;
 }
 
+const dice4D3 = () => {
+    let number = 0;
+
+        for(let i = 0; i < 4; i++){
+            number += Math.floor(Math.random() * 3) + 1;
+        }
+        
+        return number;
+}
+
 const dice3D5 = () => {
     let number = 0;
 
@@ -35,5 +45,6 @@ module.exports={
     dice1D20,
     dice1D3,
     dice2D3,
+    dice4D3,
     dice3D5
 }

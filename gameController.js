@@ -2,9 +2,9 @@ const diceNumbers = require('./dices/diceNumbers');
 
 const game = async (heroes) => {
     console.log("entra en la fncion game")
-    const villainZarate = await getZarate(heroes);
+    const villainZarate = getZarate(heroes);
 
-    const superHero = await getRandomHero(heroes, villainZarate);
+    const superHero = getRandomHero(heroes, villainZarate);
 
     const startingOrder = getStartingOrder(villainZarate, superHero);
 
@@ -37,62 +37,137 @@ const game = async (heroes) => {
     console.log(villainZarateObject);
     console.log(`------------------------------`);
     console.log(`El primer asalto es para ${startingOrder[0].name}`);
+
+    let i = 1;
+    let turn = 0;
+    let noTurn = 1;
+
+    while(villainZarate.powerstats.hitPoints > 0 && superHero.powerstats.hitPoints > 0){
+        
+        console.log(`------------------------------`);
+        console.log(`Comienza el asalto ${i}`);
+        console.log(`------------------------------`);
     
-    gameLoop(villainZarate, superHero, 1, startingOrder);
-}
-
-const gameLoop = (villainZarate, superHero, i, startingOrder) => {
-    console.log(`------------------------------`);
-    console.log(`Comienza el asalto ${i}`);
-    console.log(`------------------------------`);
-
-    let success;
-
-    const firstDiceThrow = diceNumbers.dice1D100();
-
-    if(firstDiceThrow <= startingOrder[0].powerstats.combat){
-        success = true;
-    }
-
-    if(success){
-        const secondDiceThrow = diceNumbers.dice1D20();
-
-        if(secondDiceThrow > 2 && secondDiceThrow < 18){
-            console.log("DAÑO NORMAL")
-            let normalDamage = Math.ceil((startingOrder[1].powerstats.power + startingOrder[1].powerstats.strength) * secondDiceThrow / 100);
-            startingOrder[1].powerstats.hitPoints = startingOrder[1].powerstats.hitPoints - normalDamage;
+        let success;
+        console.log(`El asalto es para ${startingOrder[turn].name}`);
+    
+        const firstDiceThrow = diceNumbers.dice1D100();
+    
+        if(firstDiceThrow <= startingOrder[0].powerstats.combat){
+            success = true;
         }
-        else if(secondDiceThrow > 17){
-            if(secondDiceThrow === 18){
-                criticalDamage
+    
+        if(success){
+            const secondDiceThrow = diceNumbers.dice1D20();
+
+            console.log(`${startingOrder[turn].name} obtiene un ${firstDiceThrow} y ataca con éxito`);
+    
+            if(secondDiceThrow > 2 && secondDiceThrow < 18){
+                let normalDamage = Math.ceil((startingOrder[noTurn].powerstats.power + startingOrder[noTurn].powerstats.strength) * secondDiceThrow / 100);
+                startingOrder[noTurn].powerstats.hitPoints = startingOrder[noTurn].powerstats.hitPoints - normalDamage;
+                console.log(`${startingOrder[turn].name} obtiene un ${secondDiceThrow}, empuña su arma y ejerce un daño de ${normalDamage}`);
+            }
+            else if(secondDiceThrow > 17){
+                let totalCriticalDamage;
+                if(secondDiceThrow === 18){
+                    
+                    const thirdDiceThrow = diceNumbers.dice1D3();
+    
+                    let criticalDamage = (startingOrder[noTurn].powerstats.intelligence * startingOrder[noTurn].powerstats.durability / 100) * thirdDiceThrow;
+                    totalCriticalDamage = Math.ceil(((startingOrder[noTurn].powerstats.power + startingOrder[noTurn].powerstats.strength) * secondDiceThrow / 100) + criticalDamage);
+                    startingOrder[noTurn].powerstats.hitPoints = startingOrder[noTurn].powerstats.hitPoints - totalCriticalDamage;
+                }
+                else if(secondDiceThrow === 19){
+    
+                    const thirdDiceThrow = diceNumbers.dice2D3();
+    
+                    let criticalDamage = (startingOrder[noTurn].powerstats.intelligence * startingOrder[noTurn].powerstats.durability / 100) * thirdDiceThrow;
+                    totalCriticalDamage = Math.ceil(((startingOrder[noTurn].powerstats.power + startingOrder[noTurn].powerstats.strength) * secondDiceThrow / 100) + criticalDamage);
+                    startingOrder[noTurn].powerstats.hitPoints = startingOrder[noTurn].powerstats.hitPoints - totalCriticalDamage;
+                }
+                else if(secondDiceThrow === 20) {
+                    const thirdDiceThrow = diceNumbers.dice3D5();
+                    let criticalDamage = (startingOrder[noTurn].powerstats.intelligence * startingOrder[noTurn].powerstats.durability / 100) * thirdDiceThrow;
+                    totalCriticalDamage = Math.ceil(((startingOrder[noTurn].powerstats.power + startingOrder[noTurn].powerstats.strength) * secondDiceThrow / 100) + criticalDamage);
+                    startingOrder[noTurn].powerstats.hitPoints = startingOrder[noTurn].powerstats.hitPoints - totalCriticalDamage;
+                }
+                console.log(`CRITICAL HIT!! ${startingOrder[turn].name} obtiene un ${secondDiceThrow}, empuña su arma y ejerce un daño de ${totalCriticalDamage}`);
+            }
+            else{
+                let damage = 0;
+                if(secondDiceThrow === 1) {
+                    const thirdDiceThrow = diceNumbers.dice1D3();
+                    damage = Math.ceil(startingOrder[turn].powerstats.speed / thirdDiceThrow);
+                    startingOrder[turn].powerstats.hitPoints = startingOrder[turn].powerstats.hitPoints - damage;
+                }
+                else if(secondDiceThrow === 2) {
+                    const thirdDiceThrow = diceNumbers.dice4D3();
+                    damage = Math.ceil(startingOrder[turn].powerstats.speed / thirdDiceThrow);
+                    startingOrder[turn].powerstats.hitPoints = startingOrder[turn].powerstats.hitPoints - damage;
+                }
+                console.log(`FAIL!! ${startingOrder[turn].name} obtiene un ${secondDiceThrow} y se clava el arma en su pierna izda. Recibe un daño de ${damage}`);
             }
         }
         else{
-            console.log("secondDiceThrow")
-            console.log(secondDiceThrow)
+            console.log(`El ataque de ${startingOrder[turn].name} no ha sido exitoso`);
         }
+
+        if(turn === 0){
+            turn = 1;
+        }
+        else{
+            turn = 0;
+        }
+
+        if(noTurn === 0){
+            noTurn = 1;
+        }
+        else{
+            noTurn= 0;
+        }
+
+        const superHeroObject = {
+            name: superHero.name,
+            intelligence: superHero.powerstats.intelligence,
+            strength: superHero.powerstats.strength,
+            speed: superHero.powerstats.speed,
+            durability: superHero.powerstats.durability,
+            power: superHero.powerstats.power,
+            combat: superHero.powerstats.combat,
+            HP: superHero.powerstats.hitPoints
+        }
+        const villainZarateObject = {
+            name: villainZarate.name,
+            intelligence: villainZarate.powerstats.intelligence,
+            strength: villainZarate.powerstats.strength,
+            speed: villainZarate.powerstats.speed,
+            durability: villainZarate.powerstats.durability,
+            power: villainZarate.powerstats.power,
+            combat: villainZarate.powerstats.combat,
+            HP: villainZarate.powerstats.hitPoints
+        }
+        console.log(superHeroObject);
+        console.log(villainZarateObject);
+        i++;
+    }
+    
+    console.log(`------------------------------`);
+    console.log(`------------------------------`);
+    if(startingOrder[0].powerstats.hitPoints <= 0){
+        console.log(`${startingOrder[0].name} ha sido derrotado`);
     }
     else{
-        console.log("FALLIDOOOO")
+        console.log(`${startingOrder[1].name} ha sido derrotado`);
     }
-
-
-
-    if(villainZarate.powerstats.hitPoints > 0 && superHero.powerstats.hitPoints > 0){
-        // gameLoop(villainZarate, superHero, i);
-    }
-    else{
-        console.log("el juego ha terminado")
-    }
-    i++;
 }
 
-const getZarate = async (heroes) => {
+
+const getZarate = (heroes) => {
     const villainZarate = heroes.find(hero => hero.name === "Junkpile");
     return villainZarate;
 }
 
-const getRandomHero = async (heroes, villainZarate) => {
+const getRandomHero = (heroes, villainZarate) => {
 
     let randomNum;
     
@@ -105,6 +180,7 @@ const getRandomHero = async (heroes, villainZarate) => {
 }
 
 const getStartingOrder = (villainZarate, superHero) => {
+
 
     let turn = [];
 
