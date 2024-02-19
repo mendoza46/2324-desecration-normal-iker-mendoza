@@ -168,13 +168,15 @@ const getZarate = (heroes) => {
 
 const getRandomHero = (heroes, villainZarate) => {
 
-    let randomNum;
+    let randomNum = 0;
     
     do{
         randomNum = Math.floor(Math.random() * heroes.length);
-    } while (randomNum === villainZarate.id);
+    } while (randomNum === villainZarate.id || heroes.find(hero => hero.id === randomNum) === undefined);
 
     const superHero = heroes.find(hero => hero.id === randomNum);
+    console.log("superHero dentro de la funcion getRandomHero")
+    console.log(superHero)
     return superHero;
 }
 
@@ -183,6 +185,8 @@ const getStartingOrder = (villainZarate, superHero) => {
 
     let turn = [];
 
+    console.log("superHero")
+    console.log(superHero)
     if(villainZarate.powerstats.intelligence + villainZarate.powerstats.combat > superHero.powerstats.intelligence + superHero.powerstats.combat){
         turn.push(villainZarate);
         turn.push(superHero);
