@@ -52,7 +52,7 @@ const game = async (heroes) => {
     
         const firstDiceThrow = diceNumbers.dice1D100();
     
-        if(firstDiceThrow <= startingOrder[0].powerstats.combat){
+        if(firstDiceThrow <= startingOrder[turn].powerstats.combat){
             success = true;
         }
     
